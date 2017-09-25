@@ -21,6 +21,10 @@ public class AudioStego {
     public static void main(String[] args) {
         if(args.length < 1){
             System.out.println("Usage: AudioStego <-d|-e|-g> <option args>");
+	    System.out.println("-d:\tDecode <encodedFile> <privKeyFile>");
+	    System.out.println("-e:\tEncode <sourceAudioFile> <outputFile> <pubKeyFile> <\"Message\">");
+	    System.out.println("-g:\tGenerate Public\\Private key pair. ");
+	    
             return;
         }
         if(args[0].equals("-d")){
@@ -30,17 +34,19 @@ public class AudioStego {
                 System.out.println("Usage: AudioStego.jar -d <encodedFile> <privKeyFile>");
                 return;
             }
-            try{
-                String eFile = args[1], privFile = args[2];
-                System.out.println("Decrypting..");
-                MorseAudioStego s = new MorseAudioStego();
-                String cipher = s.unHide(eFile);
-                String kPrivate = new BufferedReader(new FileReader(privFile)).readLine();
-                String message = BasicRSA.Decrypt(cipher, kPrivate);
-                System.out.println(message);
-            }catch(Exception e){
-                System.out.println(e.getStackTrace());
-            }
+	    else{
+		try{
+		    String eFile = args[1], privFile = args[2];
+		    System.out.println("Decrypting..");
+		    MorseAudioStego s = new MorseAudioStego();
+		    String cipher = s.unHide(eFile);
+		    String kPrivate = new BufferedReader(new FileReader(privFile)).readLine();
+		    String message = BasicRSA.Decrypt(cipher, kPrivate);
+		    System.out.println(message);
+		}catch(Exception e){
+		    System.out.println(e.getMessage());
+		}
+	    }
         }
         else if(args[0].equals("-e")){
             //encrypt
@@ -58,7 +64,7 @@ public class AudioStego {
                 s.Hide(cipher, oFile, sFile);
                 System.out.println("Encryption Succeeded.");
             }catch(Exception e){
-                System.out.println(e.getStackTrace());
+                System.out.println(e.getMessage());
             }
         }
         else if(args[0].equals("-g")){
@@ -75,6 +81,7 @@ public class AudioStego {
                 priv.close();
             }catch(Exception e){
                 System.out.println("Failed to generate key pair.");
+		System.out.println(e.getMessage());
             }
         }
         else{
